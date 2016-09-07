@@ -453,7 +453,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   # convert to colors
   # toner-lines treated differently for alpha
   if(maptype %in% c("toner-hybrid", "toner-labels", "toner-lines",
-                    "terrain-labels", "terrain-lines")){
+                    "terrain-labels", "terrain-lines", "terrain-background")){
     tile <- t(apply(tile, 1:2, function(x) rgb(x[1], x[2], x[3], x[4])))
   } else {
     tile <- t(apply(tile, 2, rgb))
