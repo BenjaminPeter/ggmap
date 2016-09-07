@@ -437,6 +437,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
 
   # grab if not in archive
   tmp <- tempfile()
+  tmp <- "tmp123"
   download.file(url, destfile = tmp, quiet = !messaging, mode = "wb")
   if(TRUE) message(paste0("Map from URL : ", url))
 
