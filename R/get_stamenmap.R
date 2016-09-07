@@ -424,7 +424,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   stopifnot(is.wholenumber(y) || !(0 <= y && y < 2^zoom))
 
   # format url http://tile.stamen.com/[maptype]/[zoom]/[x]/[y].jpg
-  if(maptype %in% c("terrain","terrain-background","watercolor")){
+  if(maptype %in% c("watercolor")){
     filetype <- "jpg"
   } else {
     filetype <- "png"
@@ -441,7 +441,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   if(TRUE) message(paste0("Map from URL : ", url))
 
   # read in
-  if(maptype %in% c("terrain","terrain-background","watercolor")){
+  if(maptype %in% c("watercolor")){
     tile <- readJPEG(tmp)
   } else {
     tile <- readPNG(tmp)
