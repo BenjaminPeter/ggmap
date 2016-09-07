@@ -436,8 +436,8 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   if (!is.null(tile) && !force) return(tile)
 
   # grab if not in archive
-  tmp <- tempfile(fileext=filetype)
-  tmpbw <- tempfile(fileext=filetype)
+  tmp <- tempfile(fileext=".png")
+  tmpbw <- tempfile(fileext=".png")
   download.file(url, destfile = tmp, quiet = !messaging, mode = "wb")
   system(sprintf("convert %s -colorspace Gray %s", tmp, tmpbw))
   if(TRUE) message(paste0("Map from URL : ", url))
