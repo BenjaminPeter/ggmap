@@ -436,16 +436,17 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   if (!is.null(tile) && !force) return(tile)
 
   # grab if not in archive
-  tmp <- tempfile()
-  tmp <- "tmp123"
+  tmp <- tempfile(fileext=filetype)
+  tmpbw <- tempfile(fileext=filetype)
   download.file(url, destfile = tmp, quiet = !messaging, mode = "wb")
+  system(sprintf("convert %s -colorspace Gray %s", tmp, tmpbw))
   if(TRUE) message(paste0("Map from URL : ", url))
 
   # read in
   if(maptype %in% c("watercolor")){
-    tile <- readJPEG(tmp)
+    tile <- readJPEG(tmpbw)
   } else {
-    tile <- readPNG(tmp)
+    tile <- readPNG(tmpbw)
   }
 
 
