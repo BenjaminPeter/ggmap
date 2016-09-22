@@ -429,6 +429,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   } else {
     filetype <- "png"
   }
+  filetype <- 'jpg'
   url <- paste0(paste0(c("http://tile.stamen.com", maptype, zoom, x, y), collapse = "/"), ".", filetype)
   url <- sprintf("/data/eems_pipeline/reliefmaps/%d_%d-%d.gray.%s",zoom, x, y, filetype)
 
