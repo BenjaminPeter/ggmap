@@ -279,6 +279,7 @@ get_stamenmap <- function(
 
 
   # stitch tiles together
+  lt <<- listOfTiles
   map <- stitch(listOfTiles)
 
 
@@ -437,7 +438,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   tile <- file_drawer_get(url)
   if (!is.null(tile) && !force) return(tile)
 
-  return(readJPEG(url))
+  tile <- readJPEG(url)
 
   # grab if not in archive
   #tmp <- tempfile(fileext=".png")
@@ -513,6 +514,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
 
 stitch <- function(tiles){
 
+
   # trick R CMD check
   ll.lat <- NULL; rm(ll.lat);
   ll.lon <- NULL; rm(ll.lon);
@@ -520,7 +522,6 @@ stitch <- function(tiles){
   # determine bounding box
   bbs <- ldply(tiles, function(x) attr(x, "bb"))
 
-  print(bbs)
 
   bigbb <- data.frame(
     ll.lat = min(bbs$ll.lat),
