@@ -520,6 +520,8 @@ stitch <- function(tiles){
   # determine bounding box
   bbs <- ldply(tiles, function(x) attr(x, "bb"))
 
+  print(bbs)
+
   bigbb <- data.frame(
     ll.lat = min(bbs$ll.lat),
     ll.lon = min(bbs$ll.lon),
