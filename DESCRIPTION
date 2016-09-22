@@ -1,4 +1,4 @@
-Package: ggmap
+Package: ggmapcustom
 Version: 2.6.1
 Title: Spatial Visualization with ggplot2
 Description: A collection of functions to visualize spatial data and models
