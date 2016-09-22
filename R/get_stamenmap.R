@@ -430,24 +430,27 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
     filetype <- "png"
   }
   url <- paste0(paste0(c("http://tile.stamen.com", maptype, zoom, x, y), collapse = "/"), ".", filetype)
+  url <- sprintf("/data/eems_pipeline/reliefmaps/%d_%d-%d.gray.%s",zoom, x, y, filetype)
 
   # lookup in archive
   tile <- file_drawer_get(url)
   if (!is.null(tile) && !force) return(tile)
 
+  return(readJPEG(url))
+
   # grab if not in archive
-  tmp <- tempfile(fileext=".png")
-  tmpbw <- tempfile(fileext=".png")
-  download.file(url, destfile = tmp, quiet = !messaging, mode = "wb")
-  system(sprintf("convert %s -colorspace Gray %s", tmp, tmpbw))
-  if(TRUE) message(paste0("Map from URL : ", url))
+  #tmp <- tempfile(fileext=".png")
+  #tmpbw <- tempfile(fileext=".png")
+  #download.file(url, destfile = tmp, quiet = !messaging, mode = "wb")
+  #system(sprintf("convert %s -colorspace Gray %s", tmp, tmpbw))
+  #if(TRUE) message(paste0("Map from URL : ", url))
 
   # read in
-  if(maptype %in% c("watercolor")){
-    tile <- readJPEG(tmpbw)
-  } else {
-    tile <- readPNG(tmpbw)
-  }
+  #if(maptype %in% c("watercolor")){
+  #  tile <- readJPEG(tmpbw)
+  #} else {
+  #  tile <- readPNG(tmpbw)
+  #}
 
 
   # convert to colors
