@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 Package: ggmapcustom
 Version: 2.6.1
+=======
+Package: ggmap
+Version: 2.7
+>>>>>>> upstream/master
 Title: Spatial Visualization with ggplot2
 Description: A collection of functions to visualize spatial data and models
     on top of static maps from various online sources (e.g Google Maps and Stamen
@@ -10,8 +15,8 @@ BugReports: https://github.com/dkahle/ggmap/issues
 Authors@R: c(person("David", "Kahle", email = "david.kahle@gmail.com", role = c("aut", "cre")),
   person("Hadley", "Wickham", email = "h.wickham@gmail.com", role = "aut"))
 Depends:
-    R (>= 2.14.0),
-    ggplot2 (>= 2.0.0)
+    R (>= 3.1.0),
+    ggplot2 (>= 2.2.0)
 Imports:
     proto,
     RgoogleMaps,
@@ -23,12 +28,14 @@ Imports:
     jpeg,
     geosphere,
     digest,
-    scales
+    scales,
+    dplyr,
+    bitops
 Suggests:
     MASS,
     stringr,
     hexbin,
-    dplyr
+    tibble
 License: GPL-2
 LazyData: true
 RoxygenNote: 5.0.1

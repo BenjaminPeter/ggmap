@@ -7,7 +7,7 @@
 get_cloudmademap(bbox = c(left = -95.80204, bottom = 29.38048, right =
   -94.92313, top = 30.14344), zoom = 10, api_key, maptype = 1,
   highres = TRUE, crop = TRUE, messaging = FALSE, urlonly = FALSE,
-  filename = "ggmapTemp", color = c("color", "bw"), ...)
+  filename = NULL, color = c("color", "bw"), ...)
 }
 \arguments{
 \item{bbox}{a bounding box in the format c(lowerleftlon,
@@ -30,7 +30,8 @@ details}
 \item{urlonly}{return url only}
 
 \item{filename}{destination file for download (file extension
-added according to format)}
+added according to format). Default \code{NULL} means a random
+\code{\link{tempfile}}.}
 
 \item{color}{color or black-and-white}
 
@@ -42,7 +43,7 @@ a ggmap object (a classed raster object with a bounding
 }
 \description{
 \code{get_cloudmademap} accesses a tile server for Stamen Maps
-and downloads/stiches map tiles/formats a map image. This
+and downloads/stitches map tiles/formats a map image. This
 function requires an api key which can be obtained for free from
 http://cloudmade.com/user/show (defunct?). Thousands of maptypes
 ("styles"), including create-your-own options, are available from
@@ -52,6 +53,7 @@ http://maps.cloudmade.com/editor (defunct).
 \dontrun{ # in what follows, enter your own api key
 
 api_key <- '<your api key here>'
+api_key <- 'b23b0358e87c4ff99f81029eda25c903'
 
 map <- get_cloudmademap(api_key = api_key)
 ggmap(map)

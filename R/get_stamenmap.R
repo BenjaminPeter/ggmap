@@ -30,41 +30,66 @@
 #'
 #' \dontrun{ # to diminish run check time
 #'
-#' gc <- geocode("baylor university")
-#' google <- get_googlemap("baylor university", zoom = 15)
-#' ggmap(google) +
-#'   geom_point(aes(x = lon, y = lat), data = gc, colour = "red", size = 2)
 #'
-#' bbox <- c(left = -97.132, bottom = 31.536, right = -97.105, top = 31.560)
+#' ##### basic usage
+#' ########################################
+#'
+#' place <- "baylor science building"
+#' google <- get_googlemap(place, zoom = 15)
+#' ggmap(google)
+#'
+#' # grab the bounding box
+#' bbox <- bb2bbox(attr(google, "bb"))
+#'
+#' # and pull stamen map tiles
 #' ggmap(get_stamenmap(bbox, zoom = 13))
 #' ggmap(get_stamenmap(bbox, zoom = 14))
 #' ggmap(get_stamenmap(bbox, zoom = 15))
 #' # ggmap(get_stamenmap(bbox, zoom = 16))
 #' # ggmap(get_stamenmap(bbox, zoom = 17))
 #'
+#'
+#'
+#' # since mid-2016, stamen's terrain tileset is available for
+#' # the entire globe
+#' place <- "mount everest"
+#' (google <- get_googlemap(place, zoom = 9))
+#' ggmap(google)
+#' bbox_everest <- c(left = 86.05, bottom = 27.21, right = 87.81, top = 28.76)
+#' ggmap(get_stamenmap(bbox_everest, zoom = 9))
+#'
+#'
 #' # note that the osm code may not run due to overloaded
 #' # servers.
 #'
-#' # various maptypes are available.  bump it up to zoom = 15 for better resolution.
-#' ggmap(get_stamenmap(bbox, maptype = "terrain", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "terrain-background", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "terrain-labels", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "terrain-lines", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-2010", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-2011", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-background", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-hybrid", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-labels", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-lines", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "toner-lite", zoom = 14))
-#' ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 14))
+#' ##### maptypes
+#' ########################################
+#'
+#' place <- "rio de janeiro"
+#' google <- get_googlemap(place, zoom = 10)
+#' ggmap(google)
+#' bbox <- bb2bbox(attr(google, "bb"))
+#'
+#'
+#' ggmap(get_stamenmap(bbox, maptype = "terrain"))
+#' ggmap(get_stamenmap(bbox, maptype = "terrain-background"))
+#' ggmap(get_stamenmap(bbox, maptype = "terrain-labels"))
+#' ggmap(get_stamenmap(bbox, maptype = "terrain-lines"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-2010"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-2011"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-background"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-hybrid"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-labels"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-lines"))
+#' ggmap(get_stamenmap(bbox, maptype = "toner-lite"))
+#' ggmap(get_stamenmap(bbox, maptype = "watercolor"))
 #'
 #' ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 11), extent = "device")
 #' ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 12), extent = "device")
 #' ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 13), extent = "device")
 #' ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 14), extent = "device")
-#' # ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 15), extent = "device")
+#' ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 15), extent = "device")
 #' # ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 16), extent = "device")
 #' # ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 17), extent = "device")
 #' # ggmap(get_stamenmap(bbox, maptype = "watercolor", zoom = 18), extent = "device")
@@ -77,10 +102,6 @@
 #' ggmap(stamen) +
 #'   geom_point(aes(x = lon, y = lat), data = gc, colour = "red", size = 2)
 #'
-#'
-#' osm <- get_openstreetmap(bbox, scale = OSM_scale_lookup(15))
-#' ggmap(osm) +
-#'   geom_point(aes(x = lon, y = lat), data = gc, colour = "red", size = 2)
 #'
 #'
 #' ggmap(get_stamenmap(bbox, zoom = 15, maptype = "watercolor"))+
@@ -201,6 +222,10 @@ get_stamenmap <- function(
   args <- as.list(match.call(expand.dots = TRUE)[-1])
   argsgiven <- names(args)
 
+  if ("location" %in% argsgiven) {
+    warning("location is not a valid argument to get_stamenmap(); it is ignored.")
+  }
+
   if("bbox" %in% argsgiven){
     if(!(is.numeric(bbox) && length(bbox) == 4)){
       stop("bounding box improperly specified.  see ?get_openstreetmap", call. = F)
@@ -210,7 +235,7 @@ get_stamenmap <- function(
   if("zoom" %in% argsgiven){
     if(!(is.numeric(zoom) && length(zoom) == 1 &&
     zoom == round(zoom) && zoom >= 0 && zoom <= 18)){
-      stop("scale must be a postive integer 0-18, see ?get_stamenmap.", call. = F)
+      stop("scale must be a positive integer 0-18, see ?get_stamenmap.", call. = F)
     }
   }
 
@@ -249,9 +274,7 @@ get_stamenmap <- function(
   fourCornersTiles <- apply(fourCorners, 1, function(v) LonLat2XY(v[1],v[2],v[3]))
 
   xsNeeded <- Reduce(":", sort(unique(as.numeric(sapply(fourCornersTiles, function(df) df$X)))))
-  numXTiles <- length(xsNeeded)
   ysNeeded <- Reduce(":", sort(unique(as.numeric(sapply(fourCornersTiles, function(df) df$Y)))))
-  numYTiles <- length(ysNeeded)
   tilesNeeded <- expand.grid(x = xsNeeded, y = ysNeeded)
   if(nrow(tilesNeeded) > 40){
     message(paste0(nrow(tilesNeeded), " tiles needed, this may take a while ",
@@ -261,6 +284,7 @@ get_stamenmap <- function(
 
   # make urls - e.g. http://tile.stamen.com/[maptype]/[zoom]/[x]/[y].jpg
   base_url <- "http://tile.stamen.com/"
+  # base_url <- "http://b.b.tile.stamen.com/"
   base_url <- paste(base_url, maptype, "/", zoom, sep = "")
   urls <- paste(base_url,
     apply(tilesNeeded, 1, paste, collapse = "/"), sep = "/")
@@ -270,8 +294,6 @@ get_stamenmap <- function(
 
 
   # make list of tiles
-  count <- 0
-  nTiles <- nrow(tilesNeeded)
   listOfTiles <- lapply(split(tilesNeeded, 1:nrow(tilesNeeded)), function(v){
     v <- as.numeric(v)
     get_stamenmap_tile(maptype, zoom, v[1], v[2], force = force, messaging = messaging)
@@ -377,7 +399,7 @@ get_stamenmap_checkargs <- function(args){
     if("zoom" %in% argsgiven){
       if(!(is.numeric(zoom) && length(zoom) == 1 &&
       zoom == round(zoom) && zoom >= 0 && zoom <= 18)){
-        stop("scale must be a postive integer 0-18, see ?get_stamenmap.", call. = F)
+        stop("scale must be a positive integer 0-18, see ?get_stamenmap.", call. = F)
       }
     }
 
@@ -417,8 +439,7 @@ get_stamenmap_checkargs <- function(args){
 get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = TRUE, where = tempdir()){
 
   # check arguments
-  is.wholenumber <-
-    function (x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
+  is.wholenumber <- function (x, tol = .Machine$double.eps^0.5) abs(x - round(x)) < tol
 
   stopifnot(is.wholenumber(zoom) || !(zoom %in% 1:20))
   stopifnot(is.wholenumber(x) || !(0 <= x && x < 2^zoom))
@@ -454,6 +475,10 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   #  tile <- readPNG(tmpbw)
   #}
 
+  # read in/format tile
+  if (download_error) {
+
+    tile <- array(NA, dim = c(256L, 256L))
 
   # convert to colors
   # toner-lines treated differently for alpha
@@ -494,7 +519,7 @@ get_stamenmap_tile <- function(maptype, zoom, x, y, force = FALSE, messaging = T
   attr(tile, "bb") <- bb
 
   # store
-  file_drawer_set(url, tile)
+  if(!download_error) file_drawer_set(url, tile)
 
   # return
   tile
